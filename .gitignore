@@ -38,3 +38,7 @@ NULL
 
 # Docker deploy folder
 deploy/*
+
+# CLion
+.idea
+cmake-build-*
