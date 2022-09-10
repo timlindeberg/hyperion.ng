@@ -36,6 +36,7 @@ public:
 
 signals:
 	void newFrame(const Image<ColorRgb>& data);
+	void newRawData(const uint8_t* data, int width, int height, int lineLength, PixelFormat pixelFormat);
 
 private:
 	PixelFormat			_pixelFormat;

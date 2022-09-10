@@ -83,6 +83,10 @@ Hyperion::Hyperion(quint8 instance, bool readonlyMode)
 	_componentRegister = new ComponentRegister(this);
 	_imageProcessor = new ImageProcessor(_ledString, this);
 	_muxer = new PriorityMuxer(static_cast<int>(_ledString.leds().size()), this);
+
+	_croppedImageResampler.setHorizontalPixelDecimation(1);
+	_croppedImageResampler.setVerticalPixelDecimation(1);
+	_croppedImageResampler.setCropping(118, 1444, 74, 960);
 }
 
 Hyperion::~Hyperion()
@@ -172,6 +176,7 @@ void Hyperion::start()
 	connect(GlobalSignals::getInstance(), &GlobalSignals::clearGlobalInput, this, &Hyperion::clear);
 	connect(GlobalSignals::getInstance(), &GlobalSignals::setGlobalColor, this, &Hyperion::setColor);
 	connect(GlobalSignals::getInstance(), &GlobalSignals::setGlobalImage, this, &Hyperion::setInputImage);
+	connect(GlobalSignals::getInstance(), &GlobalSignals::setCroppedImage, this, &Hyperion::setCroppedImage);
 
 	// if there is no startup / background effect and no sending capture interface we probably want to push once BLACK (as PrioMuxer won't emit a priority change)
 	update();
@@ -431,6 +436,16 @@ bool Hyperion::setInputImage(int priority, const Image<ColorRgb>& image, int64_t
 	return false;
 }
 
+void Hyperion::setCroppedImage(const uint8_t * data, int width, int height, int lineLength, PixelFormat pixelFormat) {
+	if (_mCroppedImageFrameCount++ < 50) {
+		return;
+	}
+	_mCroppedImageFrameCount = 0;
+
+	std::lock_guard<std::mutex> lock{_croppedImageMutex};
+	_croppedImageResampler.processImage(data, width, height, lineLength, pixelFormat, _croppedImage);
+}
+
 bool Hyperion::setInputInactive(quint8 priority)
 {
 	return _muxer->setInputInactive(priority);
@@ -649,6 +664,14 @@ void Hyperion::update()
 	else
 	{
 		_ledBuffer = priorityInfo.ledColors;
+	}
+
+	{
+		std::lock_guard<std::mutex> lock{_croppedImageMutex};
+		if (_croppedImage.width() > 1 || _croppedImage.height() > 1) {
+			emit currentCroppedImage(_croppedImage);
+			_croppedImage.clear();
+		}
 	}
 
 	// emit rawLedColors before transform

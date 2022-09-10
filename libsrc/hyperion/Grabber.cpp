@@ -1,5 +1,6 @@
 #include <hyperion/Grabber.h>
 #include <hyperion/GrabberWrapper.h>
+#include <utils/GlobalSignals.h>
 
 Grabber::Grabber(const QString& grabberName, int cropLeft, int cropRight, int cropTop, int cropBottom)
 	: _grabberName(grabberName)
@@ -22,6 +23,8 @@ Grabber::Grabber(const QString& grabberName, int cropLeft, int cropRight, int cr
 	, _isDeviceInError(false)
 {
 	Grabber::setCropping(cropLeft, cropRight, cropTop, cropBottom);
+
+	connect(this, &Grabber::newRawData, GlobalSignals::getInstance(), &GlobalSignals::setCroppedImage);
 }
 
 void Grabber::setEnabled(bool enable)

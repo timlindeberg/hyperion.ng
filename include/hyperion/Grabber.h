@@ -111,6 +111,9 @@ public:
 
 	QString getGrabberName() const { return _grabberName; }
 
+signals:
+	void newRawData(const uint8_t * data, int width, int height, int lineLength, PixelFormat pixelFormat);
+
 protected slots:
 	///
 	/// @brief Set device in error state

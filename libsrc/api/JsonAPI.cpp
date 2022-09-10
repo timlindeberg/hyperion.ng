@@ -1150,6 +1150,18 @@ void JsonAPI::handleLedColorsCommand(const QJsonObject &message, const QString &
 
 		connect(_hyperion, &Hyperion::currentImage, this, &JsonAPI::setImage, Qt::UniqueConnection);
 	}
+	else if (subcommand == "cropped-imagestream-start")
+	{
+		_streaming_image_reply["success"] = true;
+		_streaming_image_reply["command"] = command + "raw-imagestream-update";
+		_streaming_image_reply["tan"] = tan;
+
+		connect(_hyperion, &Hyperion::currentCroppedImage, this, &JsonAPI::setImage, Qt::UniqueConnection);
+	}
+	else if (subcommand == "cropped-imagestream-stop")
+	{
+		disconnect(_hyperion, &Hyperion::currentCroppedImage, this, 0);
+	}
 	else if (subcommand == "imagestream-stop")
 	{
 		disconnect(_hyperion, &Hyperion::currentImage, this, 0);

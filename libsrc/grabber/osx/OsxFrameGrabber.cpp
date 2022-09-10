@@ -66,6 +66,11 @@ int OsxFrameGrabber::grabFrame(Image<ColorRgb> & image)
 		dspWidth  = CGImageGetWidth(dispImage);
 		dspHeight = CGImageGetHeight(dispImage);
 
+		emit newRawData(pImgData,
+						static_cast<int>(dspWidth),
+						static_cast<int>(dspHeight),
+						static_cast<int>(CGImageGetBytesPerRow(dispImage)),
+						PixelFormat::BGR32);
 		_imageResampler.processImage( pImgData,
 									  static_cast<int>(dspWidth),
 									  static_cast<int>(dspHeight),

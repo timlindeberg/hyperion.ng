@@ -1,4 +1,5 @@
 #include "grabber/EncoderThread.h"
+#include "utils/GlobalSignals.h"
 
 EncoderThread::EncoderThread()
 	: _localData(nullptr)
@@ -73,6 +74,8 @@ void EncoderThread::setup(
 #endif
 
 	memcpy(_localData, sharedData, size);
+
+	connect(this, &EncoderThread::newRawData, GlobalSignals::getInstance(), &GlobalSignals::setRawImage);
 }
 
 void EncoderThread::process()
@@ -101,16 +104,23 @@ void EncoderThread::process()
 			}
 
 			Image<ColorRgb> image = Image<ColorRgb>();
+			PixelFormat format =
+#if defined(ENABLE_V4L2)
+				_pixelFormat;
+#else
+				PixelFormat::BGR24;
+#endif
+			emit newRawData(_localData,
+							_width,
+							_height,
+							_lineLength,
+							format);
 			_imageResampler.processImage(
 				_localData,
 				_width,
 				_height,
 				_lineLength,
-#if defined(ENABLE_V4L2)
-				_pixelFormat,
-#else
-				PixelFormat::BGR24,
-#endif
+				format,
 				image
 			);
 

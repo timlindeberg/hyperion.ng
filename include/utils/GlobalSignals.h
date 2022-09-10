@@ -4,6 +4,7 @@
 #include <utils/Image.h>
 #include <utils/ColorRgb.h>
 #include <utils/Components.h>
+#include <utils/PixelFormat.h>
 
 // qt
 #include <QObject>
@@ -46,6 +47,8 @@ signals:
 	/// @param image  The prepared image
 	///
 	void setV4lImage(const QString& name, const Image<ColorRgb>& image);
+
+	void setCroppedImage(const uint8_t* data, int width, int height, int lineLength, PixelFormat pixelFormat);
 
 	///
 	/// @brief PIPE the register command for a new global input over HyperionDaemon to Hyperion class

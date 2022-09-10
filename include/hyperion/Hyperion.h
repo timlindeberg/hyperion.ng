@@ -17,6 +17,8 @@
 #include <utils/ColorRgb.h>
 #include <utils/Components.h>
 #include <utils/VideoMode.h>
+#include <utils/PixelFormat.h>
+#include <utils/ImageResampler.h>
 
 // Hyperion includes
 #include <hyperion/LedString.h>
@@ -154,6 +156,8 @@ public slots:
 	/// @return              True on success, false when priority is not found
 	///
 	bool setInputImage(int priority, const Image<ColorRgb>& image, int64_t timeout_ms = PriorityMuxer::ENDLESS, bool clearEffect = true);
+
+	void setCroppedImage(const uint8_t * data, int width, int height, int lineLength, PixelFormat pixelFormat);
 
 	///
 	/// Writes a single color to all the leds for the given time and priority
@@ -419,6 +423,8 @@ signals:
 	///
 	void currentImage(const Image<ColorRgb> & image);
 
+	void currentCroppedImage(const Image<ColorRgb>& image);
+
 	/// Signal which is emitted, when a new json message should be forwarded
 	void forwardJsonMessage(QJsonObject);
 
@@ -573,6 +579,11 @@ private:
 	/// Boblight instance
 	BoblightServer* _boblightServer;
 #endif
+
+	int _mCroppedImageFrameCount;
+	std::mutex _croppedImageMutex;
+	Image<ColorRgb> _croppedImage;
+	ImageResampler _croppedImageResampler;
 
 	bool _readOnlyMode;
 };
