@@ -65,20 +65,20 @@ SET ( DEFAULT_DISPMANX                    OFF )
 SET ( DEFAULT_DX                          OFF )
 SET ( DEFAULT_MF                          OFF )
 SET ( DEFAULT_OSX                         OFF )
-SET ( DEFAULT_QT                          ON  )
+SET ( DEFAULT_QT                          OFF )
 SET ( DEFAULT_V4L2                        OFF )
 SET ( DEFAULT_X11                         OFF )
 SET ( DEFAULT_XCB                         OFF )
 
 # Input
-SET ( DEFAULT_BOBLIGHT_SERVER             ON  )
+SET ( DEFAULT_BOBLIGHT_SERVER             OFF )
 SET ( DEFAULT_CEC                         OFF )
-SET ( DEFAULT_FLATBUF_SERVER              ON  )
-SET ( DEFAULT_PROTOBUF_SERVER             ON  )
+SET ( DEFAULT_FLATBUF_SERVER              OFF )
+SET ( DEFAULT_PROTOBUF_SERVER             OFF )
 
 # Output
-SET ( DEFAULT_FORWARDER                   ON  )
-SET ( DEFAULT_FLATBUF_CONNECT             ON  )
+SET ( DEFAULT_FORWARDER                   OFF )
+SET ( DEFAULT_FLATBUF_CONNECT             OFF )
 
 # LED-Devices
 SET ( DEFAULT_DEV_NETWORK                 ON  )
